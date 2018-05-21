@@ -8,141 +8,142 @@ using Sansar.Simulation;
 
 public class SmoCmd : SceneObjectScript
 {
-	/*
-	my public vars go here
+    /*
+    my public vars go here
     */
-	
+    
     [DefaultValue("!")]
     [DisplayName("Character used to start commands")]
-	public string cmdChar = "!";
-	
-	//END PUBLIC
-	
-	public override void Init()
+    public string cmdChar = "!";
+    
+    //END PUBLIC
+    
+    public override void Init()
     {
-		Script.UnhandledException += UnhandledException;
-		ScenePrivate.Chat.Subscribe(0, (ChatData data) => {
+        Script.UnhandledException += UnhandledException;
+        ScenePrivate.Chat.Subscribe(0, (ChatData data) => {
 
-			if(isSmoCmd(data))
-			{
-				//remove cmdChar
-				string cmdstr = data.Message.Substring(1,data.Message.Length-1);
-				
-				//split on sep max 3 parts
-				string[] parts = cmdstr.Split(new string[] { " " }, 3, StringSplitOptions.RemoveEmptyEntries);
+            if(isSmoCmd(data))
+            {
+                //remove cmdChar
+                string cmdstr = data.Message.Substring(1,data.Message.Length-1);
+                
+                //split on sep max 3 parts
+                string[] parts = cmdstr.Split(new string[] { " " }, 3, StringSplitOptions.RemoveEmptyEntries);
 
-				//find out operation
-				if(parts.Length > 0) 
-				{
-				string oper = parts[0].ToLower();				
-				switch (oper) {
-						case "commands":
-							msgId(data.SourceId, "\nCommand List: " +
-												 "\n " + cmdChar + "yt       Plays youtube urls" +
-												 "\n " + cmdChar + "ytpl     Plays youtube playlist" +
-												 "\n " + cmdChar + "chan     Change youtube channel" +
-												 "\n " + cmdChar + "ping     Ping" +
-												 "\n " + cmdChar + "about    About the experience" +
-												 "\n " + cmdChar + "commands This command" +
-												 "\n "
-												 );
-							break;
-							
-						case "about":
-							msgId(data.SourceId, "About: " + ScenePrivate.SceneInfo.ExperienceName +
-										 "\n- AvatarId: " + ScenePrivate.SceneInfo.AvatarId
-										 );
-							break;
+                //find out operation
+                if(parts.Length > 0) 
+                {
+                string oper = parts[0].ToLower();               
+                switch (oper) {
+                        case "commands":
+                            msgId(data.SourceId, 
+                                  "\nCommand List: " +
+                                  "\n " + cmdChar + "yt       Plays youtube urls" +
+                                  "\n " + cmdChar + "ytpl     Plays youtube playlist" +
+                                  "\n " + cmdChar + "chan     Change youtube channel" +
+                                  "\n " + cmdChar + "ping     Ping" +
+                                  "\n " + cmdChar + "about    About the experience" +
+                                  "\n " + cmdChar + "commands This command" +
+                                  "\n "
+                                  );
+                            break;
+                            
+                        case "about":
+                            msgId(data.SourceId, "About: " + ScenePrivate.SceneInfo.ExperienceName +
+                                         "\n- AvatarId: " + ScenePrivate.SceneInfo.AvatarId
+                                         );
+                            break;
 
-						case "ping":
-							msgId(data.SourceId, "\nPong");
-							break;
+                        case "ping":
+                            msgId(data.SourceId, "\nPong");
+                            break;
 
-						case "chan":
-							msgId(data.SourceId, "\nChanging to channel " + parts[1]);
-							break;
+                        case "chan":
+                            msgId(data.SourceId, "\nChanging to channel " + parts[1]);
+                            break;
 
-						case "yt":
-							//Make sure there is parameter
-							if(parts.Length > 1)
-							{
-								//string ytUrl = parts[2];
-								string ytUrl = getYtEmbedUrl(parts[1]);
-								msgId(data.SourceId, "yturl: " + ytUrl);
-								ScenePrivate.OverrideMediaSource(ytUrl);
-							} else {	
-								msgId(data.SourceId, "Copy and paste a url from youtube for this to work");
-							}
-							break;
-						
-						case "ytpl":
-							if(parts.Length > 1)
-							{
-								string ytPlUrl = getYtPlEmbedUrl(parts[1]);
-								msgId(data.SourceId, "ytplurl: " + ytPlUrl);
-								ScenePrivate.OverrideMediaSource(ytPlUrl);
-							}
-							break;
-						default:
-							//msgId(data.SourceId, "Invalid Command");
-							break;
-					}
-				}
-			}
-		});
-	}
+                        case "yt":
+                            //Make sure there is parameter
+                            if(parts.Length > 1)
+                            {
+                                //string ytUrl = parts[2];
+                                string ytUrl = getYtEmbedUrl(parts[1]);
+                                msgId(data.SourceId, "yturl: " + ytUrl);
+                                ScenePrivate.OverrideMediaSource(ytUrl);
+                            } else {    
+                                msgId(data.SourceId, "Copy and paste a url from youtube for this to work");
+                            }
+                            break;
+                        
+                        case "ytpl":
+                            if(parts.Length > 1)
+                            {
+                                string ytPlUrl = getYtPlEmbedUrl(parts[1]);
+                                msgId(data.SourceId, "ytplurl: " + ytPlUrl);
+                                ScenePrivate.OverrideMediaSource(ytPlUrl);
+                            }
+                            break;
+                        default:
+                            //msgId(data.SourceId, "Invalid Command");
+                            break;
+                    }
+                }
+            }
+        });
+    }
 
     private void msgAll(string Text) {
-		ScenePrivate.Chat.MessageAllUsers($"{Text}");
-	}
-	private void msgId(SessionId sourceId, string Text) {
-		AgentPrivate agent = ScenePrivate.FindAgent(sourceId);
-		agent.SendChat($"{Text}");
-		//agent.SendChat($"{ScenePrivate.SceneInfo.ExperienceName} scene!");
-	}
-	private bool isSmoCmd(ChatData data) {
-		return data.Message.Trim().ToLower().StartsWith($"{cmdChar.ToLower()}");
-	}
-	
-	private string getYtEmbedUrl(string url) {
-		string youtube_id = "nQN9CITV-T4";
-		
-		if (url.IndexOf("youtube.com/") != -1)
-		{
-			youtube_id = url.Split(new string[] { "v=" }, StringSplitOptions.None)[1];
-			if (url.IndexOf("&") != -1)
-			{
-			youtube_id = youtube_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
-			}
-		} else if (url.IndexOf("youtu.be/") != -1) {
-			youtube_id = url.Split(new string[] { "youtu.be/" }, StringSplitOptions.None)[1];
-			if (url.IndexOf("&") != -1)
-			{
-			youtube_id = youtube_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
-			}
-		}
-		
-		return "https://www.youtube.com/embed/" + youtube_id + "?autoplay=1";
-	}
-	
-	private string getYtPlEmbedUrl(string url) {
-		string playlist_id = "PL2B009153AC977F90";
-		
-		//Is this a playlist ID?
-		if (url.Length == 34 && url.Substring(0,2) == "PL") 
-		{
-			playlist_id = url;
-		} else if (url.IndexOf("youtube.com/") != -1) {
-			playlist_id = url.Split(new string[] { "list=" }, StringSplitOptions.None)[1];
-			if (url.IndexOf("&") != -1)
-			{
-			playlist_id = playlist_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
-			}
-		}
-		return "https://www.youtube.com/embed/videoseries?list=" + playlist_id + "&autoplay=1&loop=1";
-	}
-	
-	private void UnhandledException(object sender, Exception e) {
+        ScenePrivate.Chat.MessageAllUsers($"{Text}");
+    }
+    private void msgId(SessionId sourceId, string Text) {
+        AgentPrivate agent = ScenePrivate.FindAgent(sourceId);
+        agent.SendChat($"{Text}");
+        //agent.SendChat($"{ScenePrivate.SceneInfo.ExperienceName} scene!");
+    }
+    private bool isSmoCmd(ChatData data) {
+        return data.Message.Trim().ToLower().StartsWith($"{cmdChar.ToLower()}");
+    }
+    
+    private string getYtEmbedUrl(string url) {
+        string youtube_id = "nQN9CITV-T4";
+        
+        if (url.IndexOf("youtube.com/") != -1)
+        {
+            youtube_id = url.Split(new string[] { "v=" }, StringSplitOptions.None)[1];
+            if (url.IndexOf("&") != -1)
+            {
+            youtube_id = youtube_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
+            }
+        } else if (url.IndexOf("youtu.be/") != -1) {
+            youtube_id = url.Split(new string[] { "youtu.be/" }, StringSplitOptions.None)[1];
+            if (url.IndexOf("&") != -1)
+            {
+            youtube_id = youtube_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
+            }
+        }
+        
+        return "https://www.youtube.com/embed/" + youtube_id + "?autoplay=1";
+    }
+    
+    private string getYtPlEmbedUrl(string url) {
+        string playlist_id = "PL2B009153AC977F90";
+        
+        //Is this a playlist ID?
+        if (url.Length == 34 && url.Substring(0,2) == "PL") 
+        {
+            playlist_id = url;
+        } else if (url.IndexOf("youtube.com/") != -1) {
+            playlist_id = url.Split(new string[] { "list=" }, StringSplitOptions.None)[1];
+            if (url.IndexOf("&") != -1)
+            {
+            playlist_id = playlist_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
+            }
+        }
+        return "https://www.youtube.com/embed/videoseries?list=" + playlist_id + "&autoplay=1&loop=1";
+    }
+    
+    private void UnhandledException(object sender, Exception e) {
         if(!Script.UnhandledExceptionRecoverable)
         {
             Log.Write(LogLevel.Error, GetType().Name, $"Error: {e.Message}\n\n{e.StackTrace}");
