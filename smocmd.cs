@@ -39,6 +39,7 @@ public class SmoCmd : SceneObjectScript
 						case "commands":
 							msgId(data.SourceId, "\nCommand List: " +
 												 "\n " + cmdChar + "yt       Plays youtube urls" +
+												 "\n " + cmdChar + "ytpl     Plays youtube playlist" +
 												 "\n " + cmdChar + "chan     Change youtube channel" +
 												 "\n " + cmdChar + "ping     Ping" +
 												 "\n " + cmdChar + "about    About the experience" +
@@ -73,7 +74,15 @@ public class SmoCmd : SceneObjectScript
 								msgId(data.SourceId, "Copy and paste a url from youtube for this to work");
 							}
 							break;
-
+						
+						case "ytpl":
+							if(parts.Length > 1)
+							{
+								string ytPlUrl = getYtPlEmbedUrl(parts[1]);
+								msgId(data.SourceId, "ytplurl: " + ytPlUrl);
+								ScenePrivate.OverrideMediaSource(ytPlUrl);
+							}
+							break;
 						default:
 							//msgId(data.SourceId, "Invalid Command");
 							break;
@@ -115,7 +124,24 @@ public class SmoCmd : SceneObjectScript
 		
 		return "https://www.youtube.com/embed/" + youtube_id + "?autoplay=1";
 	}
-
+	
+	private string getYtPlEmbedUrl(string url) {
+		string playlist_id = "PL2B009153AC977F90";
+		
+		//Is this a playlist ID?
+		if (url.Length == 34 && url.Substring(0,2) == "PL") 
+		{
+			playlist_id = url;
+		} else if (url.IndexOf("youtube.com/") != -1) {
+			playlist_id = url.Split(new string[] { "list=" }, StringSplitOptions.None)[1];
+			if (url.IndexOf("&") != -1)
+			{
+			playlist_id = playlist_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
+			}
+		}
+		return "https://www.youtube.com/embed/videoseries?list=" + playlist_id + "&autoplay=1&loop=1";
+	}
+	
 	private void UnhandledException(object sender, Exception e) {
         if(!Script.UnhandledExceptionRecoverable)
         {
