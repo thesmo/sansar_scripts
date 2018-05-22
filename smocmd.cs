@@ -43,24 +43,22 @@ public class SmoCmd : SceneObjectScript
                                   "\n " + cmdChar + "ytpl     Plays youtube playlist" +
                                   "\n " + cmdChar + "chan     Change youtube channel" +
                                   "\n " + cmdChar + "ping     Ping" +
-                                  "\n " + cmdChar + "about    About the experience" +
+                                  "\n " + cmdChar + "reset    Reset experience" +
+                                  "\n " + cmdChar + "about    About experience" +
                                   "\n " + cmdChar + "commands This command" +
                                   "\n "
                                   );
                             break;
                             
                         case "about":
-                            msgId(data.SourceId, "About: " + ScenePrivate.SceneInfo.ExperienceName +
-                                         "\n- AvatarId: " + ScenePrivate.SceneInfo.AvatarId
-                                         );
+                            msgId(data.SourceId,
+                                  "About: " + ScenePrivate.SceneInfo.ExperienceName +
+                                  "\n- AvatarId: " + ScenePrivate.SceneInfo.AvatarId
+                                  );
                             break;
 
                         case "ping":
                             msgId(data.SourceId, "\nPong");
-                            break;
-
-                        case "chan":
-                            msgId(data.SourceId, "\nChanging to channel " + parts[1]);
                             break;
 
                         case "yt":
@@ -72,7 +70,7 @@ public class SmoCmd : SceneObjectScript
                                 msgId(data.SourceId, "yturl: " + ytUrl);
                                 ScenePrivate.OverrideMediaSource(ytUrl);
                             } else {    
-                                msgId(data.SourceId, "Copy and paste a url from youtube for this to work");
+                                msgId(data.SourceId, "Copy and paste a url from youtube");
                             }
                             break;
                         
@@ -82,8 +80,32 @@ public class SmoCmd : SceneObjectScript
                                 string ytPlUrl = getYtPlEmbedUrl(parts[1]);
                                 msgId(data.SourceId, "ytplurl: " + ytPlUrl);
                                 ScenePrivate.OverrideMediaSource(ytPlUrl);
+                            } else {
+                                msgId(data.SourceId, "Copy and paste playlist url or use playlist ID");
                             }
                             break;
+
+                        case "chan":
+                            if(parts.Length > 1)
+                            {
+                                int reqchan = Int32.Parse(parts[1]);
+                                msgId(data.SourceId, "channel: " + reqchan);
+                            } else {
+                                msgId(data.SourceId,
+                                      "\nChannel List:" +
+                                      "\n1 Pogo" +
+                                      "\n2 Jaboody Dubs" +
+                                      "\n1 Stuff" +
+                                );
+                            }
+                            break;
+
+                        case "reset":
+                            msgAll("Reset in 5 seconds");
+                            Wait(TimeSpan.FromSeconds(5));
+                            ScenePrivate.ResetScene();
+                            break;
+
                         default:
                             //msgId(data.SourceId, "Invalid Command");
                             break;
