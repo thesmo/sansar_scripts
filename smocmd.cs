@@ -95,7 +95,7 @@ public class SmoCmd : SceneObjectScript
                                       "\nChannel List:" +
                                       "\n1 Pogo" +
                                       "\n2 Jaboody Dubs" +
-                                      "\n1 Stuff" +
+                                      "\n1 Stuff"
                                 );
                             }
                             break;
