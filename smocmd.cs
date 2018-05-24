@@ -21,8 +21,17 @@ public class SmoCmd : SceneObjectScript
     public override void Init()
     {
         Script.UnhandledException += UnhandledException;
-        ScenePrivate.Chat.Subscribe(0, (ChatData data) => {
 
+        //Init Songlist
+        var songlist = new List<Tuple<string, string, int>>
+        {
+            Tuple.Create("Fmaa", "vtfKVoUYzyE", 56),
+            Tuple.Create("Cirrus", "WF34N4gJAKE", 202),
+            Tuple.Create("Boy & Bear", "sy4IhE-KAEg", 205),
+            Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234)
+        };
+
+        ScenePrivate.Chat.Subscribe(0, (ChatData data) => {
             if(isSmoCmd(data))
             {
                 //remove cmdChar
@@ -70,7 +79,13 @@ public class SmoCmd : SceneObjectScript
                                 msgId(data.SourceId, "yturl: " + ytUrl);
                                 ScenePrivate.OverrideMediaSource(ytUrl);
                             } else {    
-                                msgId(data.SourceId, "Copy and paste a url from youtube");
+                                //msgId(data.SourceId, "Copy and paste a url from youtube");
+                                Random r = new Random();
+                                int rInt = r.Next(0, songlist.Count);
+                            msgId(data.SourceId,
+                                  "Playing Random " + songlist[rInt].Item1 + " " + rInt + "/" + songlist.Count);
+
+                                ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[rInt].Item2));
                             }
                             break;
                         
@@ -126,10 +141,10 @@ public class SmoCmd : SceneObjectScript
     private bool isSmoCmd(ChatData data) {
         return data.Message.Trim().ToLower().StartsWith($"{cmdChar.ToLower()}");
     }
-    
+
     private string getYtEmbedUrl(string url) {
         string youtube_id = "nQN9CITV-T4";
-        
+
         if (url.IndexOf("youtube.com/") != -1)
         {
             youtube_id = url.Split(new string[] { "v=" }, StringSplitOptions.None)[1];
@@ -143,14 +158,16 @@ public class SmoCmd : SceneObjectScript
             {
             youtube_id = youtube_id.Split(new string[] { "&" }, StringSplitOptions.None)[0];
             }
+        } else if (url.Length == 11) {
+            //This might be an actual ID so lets try it
+            youtube_id = url;
         }
-        
         return "https://www.youtube.com/embed/" + youtube_id + "?autoplay=1";
     }
     
     private string getYtPlEmbedUrl(string url) {
         string playlist_id = "PL2B009153AC977F90";
-        
+
         //Is this a playlist ID?
         if (url.Length == 34 && url.Substring(0,2) == "PL") 
         {
@@ -164,7 +181,7 @@ public class SmoCmd : SceneObjectScript
         }
         return "https://www.youtube.com/embed/videoseries?list=" + playlist_id + "&autoplay=1&loop=1";
     }
-    
+
     private void UnhandledException(object sender, Exception e) {
         if(!Script.UnhandledExceptionRecoverable)
         {
