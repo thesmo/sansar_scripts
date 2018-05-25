@@ -16,11 +16,11 @@ public class SmoJoin : SceneObjectScript
         ScenePrivate.User.Subscribe(User.AddUser, SessionId.Invalid, AddUser);
     }
 
-    void AddUser(string Action, Sansar.Script.SessionId User, string Data) {
+    void AddUser(UserData data) {
         // Lookup the name of the agent.
-        string name = ScenePrivate.FindAgent(User).AgentInfo.Name;
+        string name = ScenePrivate.FindAgent(data.User).AgentInfo.Name;
         ScenePrivate.Chat.MessageAllUsers(string.Format("{0} Has Entered the Smotel!", name));
-        AgentPrivate agent = ScenePrivate.FindAgent(User);
+        AgentPrivate agent = ScenePrivate.FindAgent(data.User);
         agent.SendChat($"type !commands for a list");
     }
     
