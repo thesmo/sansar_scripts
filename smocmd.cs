@@ -28,6 +28,7 @@ public class SmoCmd : SceneObjectScript
             Tuple.Create("Fmaa", "vtfKVoUYzyE", 56),
             Tuple.Create("Cirrus", "WF34N4gJAKE", 202),
             Tuple.Create("Boy & Bear", "sy4IhE-KAEg", 205),
+            Tuple.Create("We Are Number One", "DUzBtXi-9Bs", 163),
             Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234)
         };
 
@@ -81,9 +82,12 @@ public class SmoCmd : SceneObjectScript
                             } else {    
                                 //msgId(data.SourceId, "Copy and paste a url from youtube");
                                 Random r = new Random();
-                                int rInt = r.Next(0, songlist.Count);
-                            msgId(data.SourceId,
-                                  "Playing Random " + songlist[rInt].Item1 + " " + rInt + "/" + songlist.Count);
+                                int rInt = r.Next(0, songlist.Count-1);
+                            msgAll(
+                                  "[" + (rInt+1) + "/" +
+                                  songlist.Count + "]" +
+                                  songlist[rInt].Item1
+                                  );
 
                                 ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[rInt].Item2));
                             }
@@ -161,7 +165,7 @@ public class SmoCmd : SceneObjectScript
         } else if (url.Length == 11) {
             //This might be an actual ID so lets try it
             youtube_id = url;
-        }
+        }z
         return "https://www.youtube.com/embed/" + youtube_id + "?autoplay=1";
     }
     
