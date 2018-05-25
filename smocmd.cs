@@ -165,7 +165,7 @@ public class SmoCmd : SceneObjectScript
         } else if (url.Length == 11) {
             //This might be an actual ID so lets try it
             youtube_id = url;
-        }z
+        }
         return "https://www.youtube.com/embed/" + youtube_id + "?autoplay=1";
     }
     
