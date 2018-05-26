@@ -29,7 +29,8 @@ public class SmoCmd : SceneObjectScript
             Tuple.Create("Cirrus", "WF34N4gJAKE", 202),
             Tuple.Create("Boy & Bear", "sy4IhE-KAEg", 205),
             Tuple.Create("We Are Number One", "DUzBtXi-9Bs", 163),
-            Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234)
+            Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234),
+            Tuple.Create("Out For A Rip", "F-glHAzXi_M", 210)
         };
 
         ScenePrivate.Chat.Subscribe(0, (ChatData data) => {
