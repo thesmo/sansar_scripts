@@ -33,6 +33,15 @@ public class SmoCmd : SceneObjectScript
             Tuple.Create("Out For A Rip", "F-glHAzXi_M", 210)
         };
 
+        var playlists = new List<Tuple<string, string, int>>
+        {
+            Tuple.Create("Pogo", "PLupdJjxWWYR55JN3UlaQdS2LPe5-fjlx7", 28),
+            Tuple.Create("Jaboody Dubs", "PLSZtrpAn6e8eP_U7Fbf-jA2ob-76IqY2u", 24)
+        };
+
+        int curSongId = 0;
+		int curPlayId = 0;
+
         ScenePrivate.Chat.Subscribe(0, (ChatData data) => {
             if(isSmoCmd(data))
             {
@@ -52,8 +61,6 @@ public class SmoCmd : SceneObjectScript
                                   "\nCommand List: " +
                                   "\n " + cmdChar + "yt       Plays youtube urls" +
                                   "\n " + cmdChar + "ytpl     Plays youtube playlist" +
-                                  "\n " + cmdChar + "chan     Change youtube channel" +
-                                  "\n " + cmdChar + "ping     Ping" +
                                   "\n " + cmdChar + "reset    Reset experience" +
                                   "\n " + cmdChar + "about    About experience" +
                                   "\n " + cmdChar + "commands This command" +
@@ -68,10 +75,6 @@ public class SmoCmd : SceneObjectScript
                                   );
                             break;
 
-                        case "ping":
-                            msgId(data.SourceId, "\nPong");
-                            break;
-
                         case "yt":
                             //Make sure there is parameter
                             if(parts.Length > 1)
@@ -83,13 +86,13 @@ public class SmoCmd : SceneObjectScript
                             } else {    
                                 //msgId(data.SourceId, "Copy and paste a url from youtube");
                                 Random r = new Random();
-                                int rInt = r.Next(0, songlist.Count-1);
-                            msgAll(
+                                int rInt = r.Next(0, songlist.Count);
+                                msgAll(
                                   "[" + (rInt+1) + "/" +
                                   songlist.Count + "]" +
                                   songlist[rInt].Item1
                                   );
-
+                                curSongId = rInt;
                                 ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[rInt].Item2));
                             }
                             break;
@@ -101,22 +104,15 @@ public class SmoCmd : SceneObjectScript
                                 msgId(data.SourceId, "ytplurl: " + ytPlUrl);
                                 ScenePrivate.OverrideMediaSource(ytPlUrl);
                             } else {
-                                msgId(data.SourceId, "Copy and paste playlist url or use playlist ID");
-                            }
-                            break;
-
-                        case "chan":
-                            if(parts.Length > 1)
-                            {
-                                int reqchan = Int32.Parse(parts[1]);
-                                msgId(data.SourceId, "channel: " + reqchan);
-                            } else {
-                                msgId(data.SourceId,
-                                      "\nChannel List:" +
-                                      "\n1 Pogo" +
-                                      "\n2 Jaboody Dubs" +
-                                      "\n1 Stuff"
-                                );
+								Random r = new Random();
+								int rInt = r.Next(0, playlists.Count);
+                                msgAll(
+                                  "[" + (rInt+1) + "/" +
+                                  playlists.Count + "]" +
+                                  playlists[rInt].Item1
+                                  );
+                                curPlayId = rInt;
+                                ScenePrivate.OverrideMediaSource(getYtPlEmbedUrl(playlists[rInt].Item2));
                             }
                             break;
 
@@ -133,6 +129,8 @@ public class SmoCmd : SceneObjectScript
                 }
             }
         });
+		//Play the current song
+		ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[curSongId].Item2));
     }
 
     private void msgAll(string Text) {
