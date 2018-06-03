@@ -35,9 +35,16 @@ public class SmoCmd : SceneObjectScript
             Tuple.Create("Cirrus", "WF34N4gJAKE", 202),
             Tuple.Create("Boy & Bear", "sy4IhE-KAEg", 205),
             Tuple.Create("We Are Number One", "DUzBtXi-9Bs", 163),
-            Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234),
+			Tuple.Create("Spocktopus", "qc57-IcwnB0", 196),
+			Tuple.Create("Warriors", "qc57-IcwnB0", 260),
+			Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234),
+			Tuple.Create("Guy On A Buffalo - Episode 1", "iJ4T9CQA0UM", 122),
+			Tuple.Create("Guy On A Buffalo - Episode 2", "v5Lmkm5EF5E", 135),
+			Tuple.Create("Guy On A Buffalo - Episode 3", "L55dKrjxcCY", 122),
+			Tuple.Create("Guy On A Buffalo - Episode 4", "WXtpNm_a4Us", 183),
+			Tuple.Create("Oh Fuck Yeah Bud", "sjdhnmQ-wmk", 216),
             Tuple.Create("Out For A Rip", "F-glHAzXi_M", 210)
-        };
+		};
 
         var playlists = new List<Tuple<string, string, int>>
         {
@@ -72,9 +79,10 @@ public class SmoCmd : SceneObjectScript
                             break;
                             
                         case "about":
-                            msgId(data.SourceId,
-                                  "About: " + ScenePrivate.SceneInfo.ExperienceName +
-                                  "\n- AvatarId: " + ScenePrivate.SceneInfo.AvatarId
+                            info  = ScenePrivate.SceneInfo;
+							msgId(data.SourceId,
+                                  "About: " + info.ExperienceName +
+                                  "\n- AvatarId: " + info.AvatarId
                                   );
                             break;
 
