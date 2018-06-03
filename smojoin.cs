@@ -37,7 +37,9 @@ public class SmoJoin : SceneObjectScript
         if (snd != null)
         {
             agent.PlaySoundAtPosition(snd, obj.Position, psonce);
-        }
+        } else {
+			Log.Write(LogLevel.Error, GetType().Name, $"No Sound");
+		}
     }
 
     private void UnhandledException(object sender, Exception e) {

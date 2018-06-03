@@ -17,7 +17,13 @@ public class SmoCmd : SceneObjectScript
     public string cmdChar = "!";
     
     //END PUBLIC
+
+    //what is playing
+	private int curSongId = 0;
+	private	int curPlayId = 0;
     
+	IEventSubscription ytTimer;
+
     public override void Init()
     {
         Script.UnhandledException += UnhandledException;
@@ -38,9 +44,6 @@ public class SmoCmd : SceneObjectScript
             Tuple.Create("Pogo", "PLupdJjxWWYR55JN3UlaQdS2LPe5-fjlx7", 28),
             Tuple.Create("Jaboody Dubs", "PLSZtrpAn6e8eP_U7Fbf-jA2ob-76IqY2u", 24)
         };
-
-        int curSongId = 0;
-		int curPlayId = 0;
 
         ScenePrivate.Chat.Subscribe(0, (ChatData data) => {
             if(isSmoCmd(data))
@@ -85,15 +88,8 @@ public class SmoCmd : SceneObjectScript
                                 ScenePrivate.OverrideMediaSource(ytUrl);
                             } else {    
                                 //msgId(data.SourceId, "Copy and paste a url from youtube");
-                                Random r = new Random();
-                                int rInt = r.Next(0, songlist.Count);
-                                msgAll(
-                                  "[" + (rInt+1) + "/" +
-                                  songlist.Count + "]" +
-                                  songlist[rInt].Item1
-                                  );
-                                curSongId = rInt;
-                                ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[rInt].Item2));
+								playRandomSong(songlist);
+                                ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[curSongId].Item2));
                             }
                             break;
                         
@@ -129,8 +125,8 @@ public class SmoCmd : SceneObjectScript
                 }
             }
         });
-		//Play the current song
-		ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[curSongId].Item2));
+		//Play some random youtubes
+		playRandomSong(songlist);
     }
 
     private void msgAll(string Text) {
@@ -167,7 +163,7 @@ public class SmoCmd : SceneObjectScript
         }
         return "https://www.youtube.com/embed/" + youtube_id + "?autoplay=1";
     }
-    
+ 
     private string getYtPlEmbedUrl(string url) {
         string playlist_id = "PL2B009153AC977F90";
 
@@ -184,6 +180,31 @@ public class SmoCmd : SceneObjectScript
         }
         return "https://www.youtube.com/embed/videoseries?list=" + playlist_id + "&autoplay=1&loop=1";
     }
+
+	private void playRandomSong(List<Tuple<string, string, int>> slist) {
+		Random r = new Random();
+		int rInt = 0;
+		int nextId = curSongId;
+		//Make sure we don't get the same ID
+		while (nextId == curSongId) {
+			rInt = r.Next(0, slist.Count);
+			nextId = rInt;
+		}
+		curSongId = nextId;
+		msgAll(
+			"Random Play\n" +
+			"[" + (rInt+1) + "/" +
+			slist.Count + "] " +
+			slist[rInt].Item1 +
+			"\nPlaying Next in " +
+			slist[curSongId].Item3 + " Seconds"
+			);
+		ScenePrivate.OverrideMediaSource(getYtEmbedUrl(slist[curSongId].Item2));
+		//TODO: destroy this timer before creating a new one
+		ytTimer = Timer.Create(TimeSpan.FromSeconds(slist[curSongId].Item3), () => { 
+			playRandomSong(slist);
+		});
+	}
 
     private void UnhandledException(object sender, Exception e) {
         if(!Script.UnhandledExceptionRecoverable)
