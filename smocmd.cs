@@ -36,7 +36,7 @@ public class SmoCmd : SceneObjectScript
             Tuple.Create("Boy & Bear", "sy4IhE-KAEg", 205),
             Tuple.Create("We Are Number One", "DUzBtXi-9Bs", 163),
 			Tuple.Create("Spocktopus", "qc57-IcwnB0", 196),
-			Tuple.Create("Warriors", "qc57-IcwnB0", 260),
+			Tuple.Create("Warriors", "Ve_p5lfYIIs", 260),
 			Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234),
 			Tuple.Create("Guy On A Buffalo - Episode 1", "iJ4T9CQA0UM", 122),
 			Tuple.Create("Guy On A Buffalo - Episode 2", "v5Lmkm5EF5E", 135),
