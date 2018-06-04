@@ -79,7 +79,7 @@ public class SmoCmd : SceneObjectScript
                             break;
                             
                         case "about":
-                            info  = ScenePrivate.SceneInfo;
+                            SceneInfo info = ScenePrivate.SceneInfo;
 							msgId(data.SourceId,
                                   "About: " + info.ExperienceName +
                                   "\n- AvatarId: " + info.AvatarId
