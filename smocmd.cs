@@ -43,6 +43,7 @@ public class SmoCmd : SceneObjectScript
 			Tuple.Create("Guy On A Buffalo - Episode 3", "L55dKrjxcCY", 122),
 			Tuple.Create("Guy On A Buffalo - Episode 4", "WXtpNm_a4Us", 183),
 			Tuple.Create("Oh Fuck Yeah Bud", "sjdhnmQ-wmk", 216),
+			Tuple.Create("The Awakening", "i_Pn4myR8Cw", 334),
             Tuple.Create("Out For A Rip", "F-glHAzXi_M", 210)
 		};
 
