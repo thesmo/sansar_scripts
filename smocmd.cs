@@ -38,12 +38,8 @@ public class SmoCmd : SceneObjectScript
 			Tuple.Create("Spocktopus", "qc57-IcwnB0", 196),
 			Tuple.Create("Warriors", "Ve_p5lfYIIs", 260),
 			Tuple.Create("Miami Nights 1984", "rDBbaGCCIhk", 234),
-			Tuple.Create("Guy On A Buffalo - Episode 1", "iJ4T9CQA0UM", 122),
-			Tuple.Create("Guy On A Buffalo - Episode 2", "v5Lmkm5EF5E", 135),
-			Tuple.Create("Guy On A Buffalo - Episode 3", "L55dKrjxcCY", 122),
-			Tuple.Create("Guy On A Buffalo - Episode 4", "WXtpNm_a4Us", 183),
-			Tuple.Create("Oh Fuck Yeah Bud", "sjdhnmQ-wmk", 216),
 			Tuple.Create("The Awakening", "i_Pn4myR8Cw", 334),
+			Tuple.Create("Never Dance Again (Battle Tapes Remix)", "cmW4d7CrqBw", 251),
             Tuple.Create("Out For A Rip", "F-glHAzXi_M", 210)
 		};
 
@@ -94,15 +90,15 @@ public class SmoCmd : SceneObjectScript
                                 //string ytUrl = parts[2];
                                 string ytUrl = getYtEmbedUrl(parts[1]);
                                 msgId(data.SourceId, "yturl: " + ytUrl);
+                                stopYt(false);
                                 ScenePrivate.OverrideMediaSource(ytUrl);
                             } else {    
-                                //msgId(data.SourceId, "Copy and paste a url from youtube");
 								playRandomSong(songlist);
-                                ScenePrivate.OverrideMediaSource(getYtEmbedUrl(songlist[curSongId].Item2));
                             }
                             break;
                         
                         case "ytpl":
+                            stopYt(false);
                             if(parts.Length > 1)
                             {
                                 string ytPlUrl = getYtPlEmbedUrl(parts[1]);
@@ -119,6 +115,23 @@ public class SmoCmd : SceneObjectScript
                                 curPlayId = rInt;
                                 ScenePrivate.OverrideMediaSource(getYtPlEmbedUrl(playlists[rInt].Item2));
                             }
+                            break;
+
+                        case "live":
+                            stopYt(false);
+                            ScenePrivate.OverrideMediaSource("http://wantsmo.com:8000/live.html");
+                            msgAll("Starting Stream Please Stand By");
+                            break;
+
+                        case "url":
+                            if(parts.Length >1)
+                            {
+                                ScenePrivate.OverrideMediaSource(parts[1]);
+                            }
+                            break;
+
+                        case "stop":
+                            stopYt(true);
                             break;
 
                         case "reset":
@@ -174,7 +187,7 @@ public class SmoCmd : SceneObjectScript
     }
  
     private string getYtPlEmbedUrl(string url) {
-        string playlist_id = "PL2B009153AC977F90";
+        string playlist_id = "PL1FB1CB881EBDEFE30";
 
         //Is this a playlist ID?
         if (url.Length == 34 && url.Substring(0,2) == "PL") 
@@ -210,10 +223,25 @@ public class SmoCmd : SceneObjectScript
 			);
 		ScenePrivate.OverrideMediaSource(getYtEmbedUrl(slist[curSongId].Item2));
 		//TODO: destroy this timer before creating a new one
+        stopYt(false);
 		ytTimer = Timer.Create(TimeSpan.FromSeconds(slist[curSongId].Item3), () => { 
 			playRandomSong(slist);
 		});
 	}
+    
+    private void stopYt(bool blank) {
+        if (ytTimer != null)
+        {
+            ytTimer.Unsubscribe();
+            ytTimer = null;
+        } else {
+            Log.Write(LogLevel.Warning, GetType().Name, $"No ytTimer Active");
+        }
+        if (blank)
+        {
+            ScenePrivate.OverrideMediaSource("about:blank");    
+        }
+    }
 
     private void UnhandledException(object sender, Exception e) {
         if(!Script.UnhandledExceptionRecoverable)
